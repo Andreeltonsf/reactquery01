@@ -13,6 +13,9 @@ const queryClient = new QueryClient({
 			gcTime: 10 * 60 * 1000,
 			// 10 minutes
 		},
+		mutations: {
+			retry: 2,
+		},
 	},
 });
 
