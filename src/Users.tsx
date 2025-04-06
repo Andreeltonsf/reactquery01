@@ -1,6 +1,5 @@
-import { useMutation } from "@tanstack/react-query";
+import { useCreateUsers } from "./hooks/useCreateUsers";
 import { useUsers } from "./hooks/useUsers";
-import { sleep } from "./sleep";
 
 export interface IUser {
 	id?: string;
@@ -15,37 +14,16 @@ export interface IUser {
 }
 
 export function Users() {
-	const { users, isLoading, refetch, isFetching, error } = useUsers();
-
 	const {
-		mutate,
-		isPending,
-		data,
-		error: Mutationerror,
-	} = useMutation({
-		mutationFn: async (newUser: IUser): Promise<IUser> => {
-			await sleep(5000);
+		users,
+		isLoading,
+		refetch,
+		isFetching,
+		error: errorUsers,
+	} = useUsers();
 
-			const response = await fetch("http://localhost:3000/users", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(newUser),
-			});
-			return response.json();
-		},
+	const { createUsers, isLoading } = useCreateUsers();
 
-		onError: (error, variables) => {
-			console.log(error);
-		},
-		onSuccess: (data, variables) => {
-			console.log(data);
-		},
-		onSettled: (data, variables) => {
-			console.log(data);
-		},
-	});
 	console.log({ data });
 	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -132,7 +110,7 @@ export function Users() {
 			</button>
 			{isLoading && <h1>Está carregando...</h1>}
 			{!isLoading && isFetching && <h1>Está buscando...</h1>}
-			{error && <h1>Erro!</h1>}
+			{errorUsers && <h1>Erro!</h1>}
 			{users?.map((user) => (
 				<div key={user.id}>
 					<strong>{user.name}</strong>
